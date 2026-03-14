@@ -14,7 +14,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let autoInterval = null;
     let isAutoEnabled = false;
     let currentWindSpeed = 12; 
-    let currentWindDir = 0;    
+    let currentWindDir = 0;
+    
+    const historyData = []; 
+    let isCriticallyAlarming = false; 
+    const alarmSound = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
 
     const ctx = document.getElementById('powerChart').getContext('2d');
     const powerChart = new Chart(ctx, {
@@ -122,12 +126,30 @@ document.addEventListener('DOMContentLoaded', () => {
         if (data.isCritical) {
             critAlert.className = 'alert alert-danger d-flex align-items-center h-100 shadow-sm mb-0 critical-pulse';
             critStatus.textContent = 'КРИТИЧНА ШВИДКІСТЬ!';
+            if (!isCriticallyAlarming) {
+                alarmSound.play().catch(e => console.log('Браузер заблокував автовідтворення звуку'));
+                isCriticallyAlarming = true;
+            }
         } else {
             critAlert.className = 'alert alert-success d-flex align-items-center h-100 shadow-sm mb-0';
             critStatus.textContent = 'Норма';
+            isCriticallyAlarming = false;
         }
 
         const timeNow = new Date().toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        historyData.push({
+            time: timeNow,
+            wind: data.wind,
+            rpm: data.rpm,
+            power: data.power,
+            angle: data.angle,
+            status: data.isCritical ? 'Критично' : (data.isBraking ? 'Гальмування' : 'Норма')
+        });
+
+        if (historyData.length > 100) {
+            historyData.shift();
+        }
+
         powerChart.data.labels.push(timeNow);
         powerChart.data.datasets[0].data.push(data.power);
         
@@ -173,6 +195,32 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         updateDashboard();     
     });
+
+    function exportToCSV() {
+        if (historyData.length === 0) {
+            alert("Немає даних для експорту!");
+            return;
+        }
+
+        let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
+
+        csvContent += "Час,Швидкість вітру (м/с),Оберти (об/хв),Потужність (кВт),Кут нахилу (°),Статус\n";
+
+        historyData.forEach(row => {
+            csvContent += `${row.time},${row.wind},${row.rpm},${row.power},${row.angle},${row.status}\n`;
+        });
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `wind_station_report_${new Date().toISOString().slice(0,10)}.csv`);
+        
+        document.body.appendChild(link); 
+        link.click(); 
+        document.body.removeChild(link); 
+    }
+
+    document.getElementById('exportBtn').addEventListener('click', exportToCSV);
 
     updateDashboard();
 });
