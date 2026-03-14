@@ -12,22 +12,21 @@
 <body class="bg-light">
     <div class="container py-4">
         <header class="pb-3 mb-4 border-bottom text-center">
-            <h1 class="display-5 fw-bold text-primary"><i class="bi bi-wind"></i> Вітрова електростанція</h1>
+            <h1 class="display-5 fw-bold text-primary responsive-title"><i class="bi bi-wind"></i> Вітрова електростанція</h1>
             <p class="fs-5 text-muted">Останнє оновлення: <span id="lastUpdate" class="fw-bold">--:--:--</span></p>
         </header>
 
         <div class="row mb-4">
-            <div class="col-12 d-flex justify-content-center gap-3 align-items-center bg-white p-3 rounded shadow-sm">
-                <button id="updateBtn" class="btn btn-primary px-4"><i class="bi bi-arrow-clockwise"></i> Оновити</button>
-                <button id="autoUpdateBtn" class="btn btn-success px-4"><i class="bi bi-play-fill"></i> Автооновлення</button>
-
+            <div class="col-12 d-flex flex-wrap justify-content-center gap-2 gap-md-3 align-items-center bg-white p-3 rounded shadow-sm custom-controls">
+                <button id="updateBtn" class="btn btn-primary px-3 px-md-4"><i class="bi bi-arrow-clockwise"></i> Оновити</button>
+                <button id="autoUpdateBtn" class="btn btn-success px-3 px-md-4"><i class="bi bi-play-fill"></i> Автооновлення</button>
                 <button id="testWindDownBtn" class="btn btn-secondary px-3 fw-bold"><i class="bi bi-arrow-down-circle"></i> -5 м/с</button>
-                <button id="testWindBtn" class="btn btn-warning px-4 text-dark fw-bold"><i class="bi bi-wind"></i> +5 м/с (Тест)</button>
+                <button id="testWindBtn" class="btn btn-warning px-3 px-md-4 text-dark fw-bold"><i class="bi bi-wind"></i> +5 м/с</button>
                 <span class="badge bg-secondary fs-6" id="autoStatus">Вимкнено</span>
             </div>
         </div>
 
-        <div class="row mb-4">
+        <div class="row mb-4 g-3">
             <div class="col-md-4">
                 <div class="alert alert-info d-flex align-items-center h-100 shadow-sm mb-0">
                     <div class="compass-container me-3">
